@@ -57,7 +57,7 @@ router.post('/pw', async request => {
         const { passwd } = await request.json()
         const { value, metadata } = await queryNote('home')
         const valid = await checkAuth(cookie, 'home')
-        if (true) {
+        if (!metadata.pw || valid) {
             const pw = passwd ? await saltPw(passwd) : undefined
             try {
                 await NOTES.put('home', value, { metadata: { ...metadata, pw } })
@@ -82,7 +82,7 @@ router.post('/setting', async request => {
         const { mode, share } = await request.json()
         const { value, metadata } = await queryNote('home')
         const valid = await checkAuth(cookie, 'home')
-        if (!metadata.pw || valid) {
+        if (true) {
             try {
                 await NOTES.put('home', value, {
                     metadata: {
