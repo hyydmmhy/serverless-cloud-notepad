@@ -37,6 +37,84 @@ router.post('/', async request => {
     return returnJSON(10001, 'KV insert fail!')
 })
 
+router.post('/pw', async request => {
+    if (request.headers.get('Content-Type') === 'application/json') {
+        const cookie = Cookies.parse(request.headers.get('Cookie') || '')
+        const { passwd } = await request.json()
+        const { value, metadata } = await queryNote('home')
+        const valid = await checkAuth(cookie, 'home')
+        if (!metadata.pw || valid) {
+            const pw = passwd ? await saltPw(passwd) : undefined
+            try {
+                await NOTES.put('home', value, { metadata: { ...metadata, pw } })
+                return returnJSON(0, null, {
+                    'Set-Cookie': Cookies.serialize('auth', '', {
+                        path: '/',
+                        expires: dayjs().subtract(100, 'day').toDate(),
+                        httpOnly: true,
+                    })
+                })
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        return returnJSON(10003, 'Password setting failed!')
+    }
+})
+
+router.post('/setting', async request => {
+    if (request.headers.get('Content-Type') === 'application/json') {
+        const cookie = Cookies.parse(request.headers.get('Cookie') || '')
+        const { mode, share } = await request.json()
+        const { value, metadata } = await queryNote('home')
+        const valid = await checkAuth(cookie, 'home')
+        if (!metadata.pw || valid) {
+            try {
+                await NOTES.put('home', value, {
+                    metadata: {
+                        ...metadata,
+                        ...mode !== undefined && { mode },
+                        ...share !== undefined && { share },
+                    },
+                })
+                const md5 = await MD5('home')
+                if (share) {
+                    await SHARE.put(md5, 'home')
+                    return returnJSON(0, md5)
+                }
+                if (share === false) {
+                    await SHARE.delete(md5)
+                }
+                return returnJSON(0)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        return returnJSON(10004, 'Update Setting failed!')
+    }
+})
+
+router.post('/auth', async request => {
+    if (request.headers.get('Content-Type') === 'application/json') {
+        const { passwd } = await request.json()
+        const { metadata } = await queryNote('home')
+        if (metadata.pw) {
+            const storePw = await saltPw(passwd)
+            if (metadata.pw === storePw) {
+                const token = await jwt.sign({ path: 'home' }, SECRET)
+                return returnJSON(0, { refresh: true }, {
+                    'Set-Cookie': Cookies.serialize('auth', token, {
+                        path: '/',
+                        expires: dayjs().add(7, 'day').toDate(),
+                        httpOnly: true,
+                    })
+                })
+            }
+        }
+    }
+    return returnJSON(10002, 'Password auth failed!')
+})
+
 router.get('/share/:md5', async (request) => {
     const lang = getI18n(request)
     const { md5 } = request.params
