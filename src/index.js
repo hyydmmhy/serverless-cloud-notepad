@@ -24,6 +24,15 @@ router.get('/js/:file', async (request) => {
 router.get('/', async (request) => {
     const lang = getI18n(request)
     const { value, metadata } = await queryNote('home')
+
+    if (metadata.pw) {
+        const cookie = Cookies.parse(request.headers.get('Cookie') || '')
+        const valid = await checkAuth(cookie, 'home')
+        if (!valid) {
+            return returnPage('NeedPasswd', { lang, title: 'home' })
+        }
+    }
+
     return returnPage('Edit', {
         lang,
         title: 'home',
