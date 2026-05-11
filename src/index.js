@@ -8,10 +8,33 @@ import { SECRET } from './constant'
 // init
 const router = Router()
 
-router.get('/', ({ url }) => {
-    const newHash = genRandomStr(3)
-    // redirect to new page
-    return Response.redirect(`${url}${newHash}`, 302)
+router.get('/', async (request) => {
+    const lang = getI18n(request)
+    const path = 'home'
+    const title = 'home'
+    const { value, metadata } = await queryNote(path)
+
+    if (!metadata.pw) {
+        return returnPage('Edit', {
+            lang,
+            title,
+            content: value,
+            ext: metadata,
+        })
+    }
+
+    const cookie = Cookies.parse(request.headers.get('Cookie') || '')
+    const valid = await checkAuth(cookie, path)
+    if (valid) {
+        return returnPage('Edit', {
+            lang,
+            title,
+            content: value,
+            ext: metadata,
+        })
+    }
+
+    return returnPage('NeedPasswd', { lang, title })
 })
 
 router.get('/share/:md5', async (request) => {
