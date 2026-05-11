@@ -9,14 +9,14 @@ const router = Router()
 
 router.get('/css/:file', async (request) => {
     const { file } = request.params
-    const url = `https://raw.githubusercontent.com/hyyddmmhy/serverless-cloud-notepad/main/static/css/${file}`
+    const url = `https://raw.githubusercontent.com/hyydmmhy/serverless-cloud-notepad/main/static/css/${file}`
     const res = await fetch(url)
     return new Response(res.body, { headers: { 'content-type': 'text/css' } })
 })
 
 router.get('/js/:file', async (request) => {
     const { file } = request.params
-    const url = `https://raw.githubusercontent.com/hyyddmmhy/serverless-cloud-notepad/main/static/js/${file}`
+    const url = `https://raw.githubusercontent.com/hyydmmhy/serverless-cloud-notepad/main/static/js/${file}`
     const res = await fetch(url)
     return new Response(res.body, { headers: { 'content-type': 'application/javascript' } })
 })
