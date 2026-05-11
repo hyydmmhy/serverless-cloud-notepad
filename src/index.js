@@ -102,6 +102,7 @@ router.post('/setting', async request => {
                 return returnJSON(0)
             } catch (error) {
                 console.error(error)
+                return returnJSON(10004, error.message)
             }
         }
         return returnJSON(10004, 'Update Setting failed!')
