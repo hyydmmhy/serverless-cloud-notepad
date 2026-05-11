@@ -51,7 +51,7 @@ const passwdPrompt = () => {
     if (!passwd.trim()) {
         alert(getI18n('pwcnbe'))
     }
-    const path = location.pathname
+    const path = location.pathname.replace(/\/$/, '') || ''
     window.fetch(`${path}/auth`, {
         method: 'POST',
         headers: {
