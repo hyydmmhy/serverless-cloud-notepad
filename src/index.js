@@ -11,14 +11,24 @@ router.get('/css/:file', async (request) => {
     const { file } = request.params
     const url = `https://raw.githubusercontent.com/hyydmmhy/serverless-cloud-notepad/main/static/css/${file}`
     const res = await fetch(url)
-    return new Response(res.body, { headers: { 'content-type': 'text/css' } })
+    return new Response(res.body, {
+        headers: {
+            'content-type': 'text/css',
+            'cache-control': 'public, max-age=86400'
+        }
+    })
 })
 
 router.get('/js/:file', async (request) => {
     const { file } = request.params
     const url = `https://raw.githubusercontent.com/hyydmmhy/serverless-cloud-notepad/main/static/js/${file}`
     const res = await fetch(url)
-    return new Response(res.body, { headers: { 'content-type': 'application/javascript' } })
+    return new Response(res.body, {
+        headers: {
+            'content-type': 'application/javascript',
+            'cache-control': 'public, max-age=86400'
+        }
+    })
 })
 
 router.get('/', async (request) => {
