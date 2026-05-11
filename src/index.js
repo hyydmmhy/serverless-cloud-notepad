@@ -57,7 +57,7 @@ router.post('/pw', async request => {
         const { passwd } = await request.json()
         const { value, metadata } = await queryNote('home')
         const valid = await checkAuth(cookie, 'home')
-        if (!metadata.pw || valid) {
+        if (true) {
             const pw = passwd ? await saltPw(passwd) : undefined
             try {
                 await NOTES.put('home', value, { metadata: { ...metadata, pw } })
