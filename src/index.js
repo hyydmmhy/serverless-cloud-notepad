@@ -7,6 +7,19 @@ import { SECRET } from './constant'
 
 const router = Router()
 
+router.get('/static/:file+', async (request) => {
+    const { file } = request.params
+    const url = `https://raw.githubusercontent.com/hyyddmmhy/serverless-cloud-notepad/main/static/${file}`
+    const res = await fetch(url)
+    const contentType = file.endsWith('.css') ? 'text/css' :
+        file.endsWith('.js') ? 'application/javascript' :
+        file.endsWith('.ico') ? 'image/x-icon' :
+        'text/plain'
+    return new Response(res.body, {
+        headers: { 'content-type': contentType }
+    })
+})
+
 router.get('/', async (request) => {
     const lang = getI18n(request)
     const { value, metadata } = await queryNote('home')
