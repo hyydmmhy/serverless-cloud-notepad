@@ -136,7 +136,7 @@ window.addEventListener('DOMContentLoaded', function () {
             const passwd = window.prompt(getI18n('enpw'))
             if (passwd == null) return;
 
-            const path = window.location.pathname
+            const path = window.location.pathname.replace(/\/$/, '')
             window.fetch(`${path}/pw`, {
                 method: 'POST',
                 headers: {
@@ -160,7 +160,7 @@ window.addEventListener('DOMContentLoaded', function () {
     if ($modeBtn) {
         $modeBtn.onclick = function (e) {
             const isMd = e.target.checked
-            const path = window.location.pathname
+            const path = window.location.pathname.replace(/\/$/, '')
             window.fetch(`${path}/setting`, {
                 method: 'POST',
                 headers: {
@@ -185,7 +185,7 @@ window.addEventListener('DOMContentLoaded', function () {
     if ($shareBtn) {
         $shareBtn.onclick = function (e) {
             const isShare = e.target.checked
-            const path = window.location.pathname
+            const path = window.location.pathname.replace(/\/$/, '')
             window.fetch(`${path}/setting`, {
                 method: 'POST',
                 headers: {
