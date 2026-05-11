@@ -10,31 +10,14 @@ const router = Router()
 
 router.get('/', async (request) => {
     const lang = getI18n(request)
-    const path = 'home'
-    const title = 'home'
-    const { value, metadata } = await queryNote(path)
+    const { value, metadata } = await queryNote('home')
 
-    if (!metadata.pw) {
-        return returnPage('Edit', {
-            lang,
-            title,
-            content: value,
-            ext: metadata,
-        })
-    }
-
-    const cookie = Cookies.parse(request.headers.get('Cookie') || '')
-    const valid = await checkAuth(cookie, path)
-    if (valid) {
-        return returnPage('Edit', {
-            lang,
-            title,
-            content: value,
-            ext: metadata,
-        })
-    }
-
-    return returnPage('NeedPasswd', { lang, title })
+    return returnPage('Edit', {
+        lang,
+        title: 'home',
+        content: value,
+        ext: metadata,
+    })
 })
 
 router.get('/share/:md5', async (request) => {
