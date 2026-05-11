@@ -8,16 +8,28 @@ import { SECRET } from './constant'
 // init
 const router = Router()
 
-router.get('/', async (request) => {
-    const lang = getI18n(request)
+router.post('/', async request => {
     const { value, metadata } = await queryNote('home')
+    const formData = await request.formData()
+    const content = formData.get('t')
 
-    return returnPage('Edit', {
-        lang,
-        title: 'home',
-        content: value,
-        ext: metadata,
-    })
+    try {
+        if (content?.trim()) {
+            await NOTES.put('home', content, {
+                metadata: {
+                    ...metadata,
+                    updateAt: dayjs().unix(),
+                },
+            })
+        } else {
+            await NOTES.delete('home')
+        }
+        return returnJSON(0)
+    } catch (error) {
+        console.error(error)
+    }
+
+    return returnJSON(10001, 'KV insert fail!')
 })
 
 router.get('/share/:md5', async (request) => {
