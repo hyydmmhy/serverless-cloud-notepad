@@ -1,5 +1,5 @@
 // static CDN
-export const CDN_PREFIX = ''
+export const CDN_PREFIX = '/static'
 
 // server side salt
 export const SALT = SCN_SALT
