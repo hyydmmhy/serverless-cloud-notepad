@@ -3,6 +3,7 @@ import { Router } from 'itty-router'
 import Cookies from 'cookie'
 import jwt from '@tsndr/cloudflare-worker-jwt'
 import { queryNote, MD5, checkAuth, genRandomStr, returnPage, returnJSON, saltPw, getI18n } from './helper'
+import { List } from './template'
 import { SECRET } from './constant'
 
 const router = Router()
@@ -147,6 +148,30 @@ router.post('/auth', async request => {
         }
     }
     return returnJSON(10002, 'Password auth failed!')
+})
+
+router.get('/list', async (request) => {
+    const { keys } = await NOTES.list()
+    const dayjs = (await import('dayjs')).default
+    const relativeTime = (await import('dayjs/plugin/relativeTime')).default
+    dayjs.extend(relativeTime)
+
+    const notes = await Promise.all(keys.map(async ({ name, metadata }) => {
+        const preview = metadata?.pw ? '' : (await NOTES.get(name) || '').slice(0, 80).replace(/\n/g, ' ')
+        return {
+            key: name,
+            preview,
+            pw: !!metadata?.pw,
+            share: !!metadata?.share,
+            mode: metadata?.mode || 'plain',
+            timeAgo: metadata?.updateAt ? dayjs.unix(metadata.updateAt).fromNow() : '未知',
+        }
+    }))
+
+    const sorted = notes.sort((a, b) => b.timeAgo.localeCompare(a.timeAgo))
+    return new Response(List({ notes: sorted }), {
+        headers: { 'content-type': 'text/html;charset=UTF-8' }
+    })
 })
 
 router.get('/share/:md5', async (request) => {
