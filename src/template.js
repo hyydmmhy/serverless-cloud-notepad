@@ -49,6 +49,14 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
     <link href="${CDN_PREFIX}/css/app.css" rel="stylesheet" media="screen" />
 </head>
 <body>
+    <div id="search-bar" style="position:sticky;top:0;z-index:99;background:#fff;border-bottom:1px solid #dde1e7;padding:8px 12px;align-items:center;gap:8px;display:none;">
+        <span style="color:#999;font-size:13px;">🔍</span>
+        <input id="search-input" type="text" placeholder="搜索内容…" style="flex:1;border:1px solid #dde1e7;border-radius:5px;padding:6px 10px;font-size:14px;outline:none;background:#f5f7fa;" />
+        <span id="search-count" style="font-size:12px;color:#999;white-space:nowrap;"></span>
+        <button id="search-prev" style="padding:4px 10px;border:1px solid #dde1e7;border-radius:4px;background:#fff;cursor:pointer;font-size:13px;">↑</button>
+        <button id="search-next" style="padding:4px 10px;border:1px solid #dde1e7;border-radius:4px;background:#fff;cursor:pointer;font-size:13px;">↓</button>
+        <button id="search-close" style="padding:4px 10px;border:1px solid #dde1e7;border-radius:4px;background:#fff;cursor:pointer;font-size:13px;color:#999;">✕</button>
+    </div>
     <div class="note-container">
         <div class="stack">
             <div class="layer_1">
@@ -57,7 +65,7 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
                         ${tips ? `<div class="tips">${tips}</div>` : ''}
                         <textarea id="contents" class="contents ${isEdit ? '' : 'hide'}" spellcheck="true" placeholder="${SUPPORTED_LANG[lang].emptyPH}">${content}</textarea>
                         ${(isEdit && ext.mode === 'md') ? '<div class="divide-line"></div>' : ''}
-                        ${tips || (isEdit && ext.mode !== 'md') ? '' : `<div id="preview-${ext.mode || 'plain'}" class="contents"></div>`}
+                        ${tips ? '' : `<div id="preview-${ext.mode || 'plain'}" class="contents ${(isEdit && ext.mode !== 'md') ? 'hide' : ''}"></div>`}
                     </div>
                 </div>
             </div>
@@ -66,7 +74,7 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
     <div id="loading"></div>
     ${MODAL(lang)}
     ${FOOTER({ ...ext, isEdit, lang })}
-    ${(ext.mode === 'md' || ext.share) ? `<script src="${CDN_PREFIX}/js/purify.min.js"></script>` : ''}
+    <script src="${CDN_PREFIX}/js/purify.min.js"></script>
     ${ext.mode === 'md' ? `<script src="${CDN_PREFIX}/js/marked.min.js"></script>` : ''}
     <script src="${CDN_PREFIX}/js/clip.js"></script>
     <script src="${CDN_PREFIX}/js/app.js"></script>
