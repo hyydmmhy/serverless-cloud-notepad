@@ -198,8 +198,9 @@ function handleSearch(q) {
 
 function highlight(text, q) {
     if (!q) return text;
-    var escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return text.replace(new RegExp(escaped, 'gi'), function(m) { return '<span class="highlight">' + m + '</span>'; });
+    var idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx === -1) return text;
+    return text.slice(0, idx) + '<span class="highlight">' + text.slice(idx, idx + q.length) + '</span>' + text.slice(idx + q.length);
 }
 
 function renderNotes(notes, q) {
