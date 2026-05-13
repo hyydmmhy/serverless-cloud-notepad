@@ -171,6 +171,12 @@ router.get('/:path', async (request) => {
     const title = decodeURIComponent(path)
     const cookie = Cookies.parse(request.headers.get('Cookie') || '')
     const { value, metadata } = await queryNote(path)
+
+    // 路径不存在则返回 404
+    if (value === null && !metadata.pw) {
+        return returnPage('Page404', { lang, title: '404' })
+    }
+
     if (!metadata.pw) {
         return returnPage('Edit', { lang, title, content: value, ext: metadata })
     }
