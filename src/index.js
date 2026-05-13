@@ -35,6 +35,11 @@ router.get('/', async (request) => {
     const lang = getI18n(request)
     const { value, metadata } = await queryNote('home')
 
+    // home 不存在时初始化
+    if (value === '' && Object.keys(metadata).length === 0) {
+        await NOTES.put('home', '', { metadata: {} })
+    }
+
     if (metadata.pw) {
         const cookie = Cookies.parse(request.headers.get('Cookie') || '')
         const valid = await checkAuth(cookie, 'home')

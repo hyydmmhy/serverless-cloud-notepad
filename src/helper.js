@@ -66,12 +66,11 @@ export async function checkAuth(cookie, path) {
 }
 
 export async function queryNote(key) {
-    const { value, metadata } = await queryNote(path)
-
-	// 路径不存在则返回 404
-	if (value === '' && Object.keys(metadata).length === 0) {
-		return returnPage('Page404', { lang, title: '404' })
-	}
+    const result = await NOTES.getWithMetadata(key)
+    return {
+        value: result.value || '',
+        metadata: result.metadata || {},
+    }
 }
 
 export function getI18n(request) {
