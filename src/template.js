@@ -198,7 +198,8 @@ function handleSearch(q) {
 
 function highlight(text, q) {
     if (!q) return text;
-    return text.replace(new RegExp(q.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'gi'), m => '<span class="highlight">' + m + '</span>');
+    var escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(escaped, 'gi'), function(m) { return '<span class="highlight">' + m + '</span>'; });
 }
 
 function renderNotes(notes, q) {
